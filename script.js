@@ -4,7 +4,7 @@ const userInput       = document.getElementById('user-input');
 const typingIndicator = document.getElementById('typing-indicator');
 
 // Replace with your free-tier key or proxy through your back end
-const GEMINI_API_KEY = 'AIzaSyC0Heb_TGb02tSDcmyWLG--nfiTcammTQo';
+const GEMINI_API_KEY = 'AIzaSyB1p1WgwochpErs-POptRg_DB3M-RjPxdY';
 
 function appendMessage(text, sender = 'bot') {
   const row = document.createElement('div');
