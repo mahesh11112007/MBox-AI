@@ -38,92 +38,121 @@
   </div>
 
   <script>
-    // Your JavaScript code here (same as before)
-    const chatBox = document.getElementById("chat-box");
-    const form = document.getElementById("chat-form");
-    const input = document.getElementById("user-input");
+  const chatBox = document.getElementById("chat-box");
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("user-input");
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const question = input.value.trim();
-      if (!question) return;
+  // Make sure chat box is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    scrollToBottom();
+  });
 
-      addMessage("user", question);
-      input.value = "";
-      
-      const typingIndicator = addTypingIndicator();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const question = input.value.trim();
+    if (!question) return;
 
-      try {
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ message: question })
-        });
+    addMessage("user", question);
+    input.value = "";
+    
+    // Show typing indicator
+    const typingIndicator = addTypingIndicator();
 
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: question })
+      });
+
+      // Remove typing indicator
+      if (typingIndicator && typingIndicator.parentNode) {
         typingIndicator.remove();
-        const data = await response.json();
-        
-        if (response.ok) {
-          addMessage("bot", data.response);
-        } else {
-          addMessage("bot", "Error: " + data.error);
-        }
-      } catch (err) {
-        typingIndicator.remove();
-        addMessage("bot", "Error: " + err.message);
       }
-    });
 
-    function addMessage(role, text) {
-      const messageDiv = document.createElement("div");
-      messageDiv.className = `message ${role}-message`;
+      const data = await response.json();
       
-      const contentDiv = document.createElement("div");
-      contentDiv.className = "message-content";
-      contentDiv.textContent = text;
-      
-      const timestampDiv = document.createElement("div");
-      timestampDiv.className = "timestamp";
-      timestampDiv.textContent = getCurrentTime();
-      
-      messageDiv.appendChild(contentDiv);
-      messageDiv.appendChild(timestampDiv);
-      chatBox.appendChild(messageDiv);
-      
-      scrollToBottom();
+      if (response.ok) {
+        addMessage("bot", data.response);
+      } else {
+        addMessage("bot", "Error: " + data.error);
+      }
+    } catch (err) {
+      // Remove typing indicator
+      if (typingIndicator && typingIndicator.parentNode) {
+        typingIndicator.remove();
+      }
+      addMessage("bot", "Error: " + err.message);
     }
+  });
 
-    function addTypingIndicator() {
-      const typingDiv = document.createElement("div");
-      typingDiv.className = "message bot-message typing";
-      
-      const contentDiv = document.createElement("div");
-      contentDiv.className = "message-content";
-      contentDiv.innerHTML = `
-        <div class="typing-indicator">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      `;
-      
-      typingDiv.appendChild(contentDiv);
-      chatBox.appendChild(typingDiv);
-      scrollToBottom();
-      
-      return typingDiv;
-    }
+  function addMessage(role, text) {
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `message ${role}-message`;
+    
+    const contentDiv = document.createElement("div");
+    contentDiv.className = "message-content";
+    contentDiv.textContent = text;
+    
+    const timestampDiv = document.createElement("div");
+    timestampDiv.className = "timestamp";
+    timestampDiv.textContent = getCurrentTime();
+    
+    messageDiv.appendChild(contentDiv);
+    messageDiv.appendChild(timestampDiv);
+    chatBox.appendChild(messageDiv);
+    
+    // Multiple scroll attempts for mobile compatibility
+    scrollToBottom();
+    requestAnimationFrame(() => scrollToBottom());
+    setTimeout(() => scrollToBottom(), 100);
+  }
 
-    function getCurrentTime() {
-      const now = new Date();
-      return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
+  function addTypingIndicator() {
+    const typingDiv = document.createElement("div");
+    typingDiv.className = "message bot-message typing";
+    
+    const contentDiv = document.createElement("div");
+    contentDiv.className = "message-content";
+    contentDiv.innerHTML = `
+      <div class="typing-indicator">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    `;
+    
+    typingDiv.appendChild(contentDiv);
+    chatBox.appendChild(typingDiv);
+    
+    // Scroll to show typing indicator
+    scrollToBottom();
+    
+    return typingDiv;
+  }
 
-    function scrollToBottom() {
+  function getCurrentTime() {
+    const now = new Date();
+    return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function scrollToBottom() {
+    if (chatBox) {
       chatBox.scrollTop = chatBox.scrollHeight;
     }
-  </script>
+  }
+
+  // Additional scroll fix for mobile
+  window.addEventListener('resize', function() {
+    setTimeout(scrollToBottom, 100);
+  });
+
+  // Ensure scroll works after images load
+  chatBox.addEventListener('load', function() {
+    scrollToBottom();
+  }, true);
+</script>
 </body>
 </html>
