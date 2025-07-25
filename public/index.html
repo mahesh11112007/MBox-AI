@@ -3,156 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MBox AI</title>
+  <title>MBox AI Studio</title>
+
+  <!-- Google Font & Feather Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/feather-icons"></script>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>MBox AI Chat</h1>
-      <p>Made by Mahesh Vilasagaram</p>
-    </header>
+  <!-- ░░░ TOP BAR ░░░ -->
+  <header class="topbar">
+    <select>
+      <option>Gemini 2.5 Pro</option>
+      <option>Gemini 1.5 Flash</option>
+    </select>
+    <div class="spacer"></div>
+    <i data-feather="star"></i>
+    <i data-feather="upload"></i>
+    <i data-feather="settings"></i>
+  </header>
 
-    <div class="chat-container">
-      <div id="chat-box">
-        <div class="message bot-message">
-          <div class="message-content">
-            Hello! I'm your AI assistant. How can I help you today?
-          </div>
-          <div class="timestamp">Just now</div>
-        </div>
-      </div>
-      
-      <form id="chat-form">
-        <div class="input-container">
-          <input type="text" id="user-input" placeholder="Type your message here..." required>
-          <button type="submit" id="send-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13"></line>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+  <!-- ░░░ MAIN SECTION ░░░ -->
+  <main>
+    <h2>Welcome to AI Studio</h2>
+  </main>
 
-  <script>
-  const chatBox = document.getElementById("chat-box");
-  const form = document.getElementById("chat-form");
-  const input = document.getElementById("user-input");
+  <!-- ░░░ WHAT’S NEW STRIP ░░░ -->
+  <section class="whats-new">
+    <article class="card">
+      <img src="" alt="">
+      <h4>URL context tool</h4>
+      <p>Fetch information directly from web links.</p>
+    </article>
 
-  // Make sure chat box is ready
-  document.addEventListener('DOMContentLoaded', function() {
-    scrollToBottom();
-  });
+    <article class="card">
+      <img src="" alt="">
+      <h4>Live audio-to-audio dialog</h4>
+      <p>Try real-time conversations with voice inputs.</p>
+    </article>
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const question = input.value.trim();
-    if (!question) return;
+    <article class="card">
+      <img src="" alt="">
+      <h4>Analyze equations</h4>
+      <p>See different quadratic solutions at a glance.</p>
+    </article>
+  </section>
 
-    addMessage("user", question);
-    input.value = "";
-    
-    // Show typing indicator
-    const typingIndicator = addTypingIndicator();
+  <!-- ░░░ INPUT BAR ░░░ -->
+  <form class="chat-input" id="chat-form">
+    <input type="text" id="user-input" placeholder="Start typing a prompt" autocomplete="off" required>
+    <button type="submit">
+      <i data-feather="send"></i>
+    </button>
+  </form>
 
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ message: question })
-      });
-
-      // Remove typing indicator
-      if (typingIndicator && typingIndicator.parentNode) {
-        typingIndicator.remove();
-      }
-
-      const data = await response.json();
-      
-      if (response.ok) {
-        addMessage("bot", data.response);
-      } else {
-        addMessage("bot", "Error: " + data.error);
-      }
-    } catch (err) {
-      // Remove typing indicator
-      if (typingIndicator && typingIndicator.parentNode) {
-        typingIndicator.remove();
-      }
-      addMessage("bot", "Error: " + err.message);
-    }
-  });
-
-  function addMessage(role, text) {
-    const messageDiv = document.createElement("div");
-    messageDiv.className = `message ${role}-message`;
-    
-    const contentDiv = document.createElement("div");
-    contentDiv.className = "message-content";
-    contentDiv.textContent = text;
-    
-    const timestampDiv = document.createElement("div");
-    timestampDiv.className = "timestamp";
-    timestampDiv.textContent = getCurrentTime();
-    
-    messageDiv.appendChild(contentDiv);
-    messageDiv.appendChild(timestampDiv);
-    chatBox.appendChild(messageDiv);
-    
-    // Multiple scroll attempts for mobile compatibility
-    scrollToBottom();
-    requestAnimationFrame(() => scrollToBottom());
-    setTimeout(() => scrollToBottom(), 100);
-  }
-
-  function addTypingIndicator() {
-    const typingDiv = document.createElement("div");
-    typingDiv.className = "message bot-message typing";
-    
-    const contentDiv = document.createElement("div");
-    contentDiv.className = "message-content";
-    contentDiv.innerHTML = `
-      <div class="typing-indicator">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    `;
-    
-    typingDiv.appendChild(contentDiv);
-    chatBox.appendChild(typingDiv);
-    
-    // Scroll to show typing indicator
-    scrollToBottom();
-    
-    return typingDiv;
-  }
-
-  function getCurrentTime() {
-    const now = new Date();
-    return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
-
-  function scrollToBottom() {
-    if (chatBox) {
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-  }
-
-  // Additional scroll fix for mobile
-  window.addEventListener('resize', function() {
-    setTimeout(scrollToBottom, 100);
-  });
-
-  // Ensure scroll works after images load
-  chatBox.addEventListener('load', function() {
-    scrollToBottom();
-  }, true);
-</script>
+  <!-- ░░░ SCRIPT ░░░ -->
+  <script src="script.js"></script>
 </body>
 </html>
