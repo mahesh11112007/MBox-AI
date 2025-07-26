@@ -10,19 +10,44 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #000; /* or your theme color */
-  color: #fff;
+  background-color: #121212;
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
   z-index: 9999;
   transition: opacity 1s ease;
+  flex-direction: column;
+  text-align: center;
 }
 
 #opening-slide.fade-out {
   opacity: 0;
   pointer-events: none;
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 20px;
+  animation: pop 1s ease-out;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 body {
   font-family: 'Courier New', monospace;
