@@ -153,6 +153,19 @@
     setTimeout(() => {
       addSystemMessage("CONNECTION_ESTABLISHED");
     }, 1000);
+
+window.addEventListener("load", () => {
+  const splash = document.getElementById("opening-slide");
+  const main = document.getElementById("main-content");
+
+  setTimeout(() => {
+    splash.classList.add("fade-out");
+    setTimeout(() => {
+      splash.style.display = "none";
+      main.style.display = "block";
+    }, 1000); // matches the CSS transition
+  }, 2000); // how long the splash shows
+});
   </script>
 </body>
 </html>
