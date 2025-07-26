@@ -15,7 +15,7 @@
     <div class="chat-container">
       <div id="chat-box">
         <div class="message bot-message">
-          <div class="message-content">> SYSTEM_READY: MBox AI Online</div>
+          <div class="message-content"> SYSTEM_READY: MBox AI Online</div>
           <div class="timestamp">00:00:00</div>
         </div>
         <div class="message bot-message">
@@ -44,7 +44,7 @@
       const question = input.value.trim();
       if (!question) return;
 
-      addMessage("user", "> " + question);
+      addMessage("user", " " + question);
       input.value = "";
       
       const typingIndicator = addTypingIndicator();
