@@ -2,53 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MBox AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>TECH_CHAT v1.0</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>MBox AI Chat</h1>
-      <p>Made by Mahesh Vilasagaram</p>
+      <h1>TECH_CHAT v1.0</h1>
     </header>
 
     <div class="chat-container">
       <div id="chat-box">
         <div class="message bot-message">
-          <div class="message-content">
-            Hello! I'm your AI assistant. How can I help you today?
-          </div>
-          <div class="timestamp">Just now</div>
+          <div class="message-content">> SYSTEM_READY: Gemini AI Online</div>
+          <div class="timestamp">[00:00:00]</div>
+        </div>
+        <div class="message bot-message">
+          <div class="message-content">> AWAITING_INPUT...</div>
+          <div class="timestamp">[00:00:01]</div>
         </div>
       </div>
       
       <form id="chat-form">
-        <div class="input-container">
-          <input type="text" id="user-input" placeholder="Type your message here..." required>
-          <button type="submit" id="send-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13"></line>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
-          </button>
-        </div>
+        <input type="text" id="user-input" placeholder="> Enter command..." required>
+        <button type="submit" id="send-button">▶</button>
       </form>
     </div>
   </div>
 
   <script>
-    // Your JavaScript code here (same as before)
     const chatBox = document.getElementById("chat-box");
     const form = document.getElementById("chat-form");
     const input = document.getElementById("user-input");
+
+    // System message
+    addSystemMessage("INITIALIZING_CONNECTION...");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const question = input.value.trim();
       if (!question) return;
 
-      addMessage("user", question);
+      addMessage("user", "> " + question);
       input.value = "";
       
       const typingIndicator = addTypingIndicator();
@@ -56,9 +52,7 @@
       try {
         const response = await fetch('/api/chat', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: question })
         });
 
@@ -68,11 +62,11 @@
         if (response.ok) {
           addMessage("bot", data.response);
         } else {
-          addMessage("bot", "Error: " + data.error);
+          addSystemMessage("ERROR: " + data.error);
         }
       } catch (err) {
         typingIndicator.remove();
-        addMessage("bot", "Error: " + err.message);
+        addSystemMessage("ERROR: NETWORK_FAILURE");
       }
     });
 
@@ -86,7 +80,27 @@
       
       const timestampDiv = document.createElement("div");
       timestampDiv.className = "timestamp";
-      timestampDiv.textContent = getCurrentTime();
+      timestampDiv.textContent = `[${getCurrentTime()}]`;
+      
+      messageDiv.appendChild(contentDiv);
+      messageDiv.appendChild(timestampDiv);
+      chatBox.appendChild(messageDiv);
+      
+      scrollToBottom();
+    }
+
+    function addSystemMessage(text) {
+      const messageDiv = document.createElement("div");
+      messageDiv.className = "message bot-message";
+      
+      const contentDiv = document.createElement("div");
+      contentDiv.className = "message-content";
+      contentDiv.style.color = "#0080ff";
+      contentDiv.textContent = "> SYSTEM: " + text;
+      
+      const timestampDiv = document.createElement("div");
+      timestampDiv.className = "timestamp";
+      timestampDiv.textContent = `[${getCurrentTime()}]`;
       
       messageDiv.appendChild(contentDiv);
       messageDiv.appendChild(timestampDiv);
@@ -97,7 +111,7 @@
 
     function addTypingIndicator() {
       const typingDiv = document.createElement("div");
-      typingDiv.className = "message bot-message typing";
+      typingDiv.className = "message bot-message";
       
       const contentDiv = document.createElement("div");
       contentDiv.className = "message-content";
@@ -118,12 +132,20 @@
 
     function getCurrentTime() {
       const now = new Date();
-      return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return now.toTimeString().slice(0, 8);
     }
 
     function scrollToBottom() {
       chatBox.scrollTop = chatBox.scrollHeight;
+      setTimeout(() => {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 50);
     }
+
+    // Add boot sequence
+    setTimeout(() => {
+      addSystemMessage("CONNECTION_ESTABLISHED");
+    }, 1000);
   </script>
 </body>
 </html>
