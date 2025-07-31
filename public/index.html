@@ -25,7 +25,7 @@
     <div class="chat-container">
       <div id="chat-box">
         <div class="message bot-message">
-          <div class="message-content"> SYSTEM_READY: MBox AI Online</div>
+          <div class="message-content">SYSTEM_READY: MBox AI Online</div>
           <div class="timestamp">00:00:00</div>
         </div>
         <div class="message bot-message">
@@ -33,9 +33,9 @@
           <div class="timestamp">00:00:01</div>
         </div>
       </div>
-      
+
       <form id="chat-form">
-        <input type="text" id="user-input" placeholder=" Chat With MBox..." required>
+        <input type="text" id="user-input" placeholder="Chat With MBox..." required>
         <button type="submit" id="send-button">✓</button>
       </form>
     </div>
@@ -54,9 +54,9 @@
       const question = input.value.trim();
       if (!question) return;
 
-      addMessage("user", " " + question);
+      addMessage("user", question);
       input.value = "";
-      
+
       const typingIndicator = addTypingIndicator();
 
       try {
@@ -68,7 +68,7 @@
 
         typingIndicator.remove();
         const data = await response.json();
-        
+
         if (response.ok) {
           addMessage("bot", data.response);
         } else {
@@ -83,46 +83,46 @@
     function addMessage(role, text) {
       const messageDiv = document.createElement("div");
       messageDiv.className = `message ${role}-message`;
-      
+
       const contentDiv = document.createElement("div");
       contentDiv.className = "message-content";
       contentDiv.textContent = text;
-      
+
       const timestampDiv = document.createElement("div");
       timestampDiv.className = "timestamp";
       timestampDiv.textContent = `[${getCurrentTime()}]`;
-      
+
       messageDiv.appendChild(contentDiv);
       messageDiv.appendChild(timestampDiv);
       chatBox.appendChild(messageDiv);
-      
+
       scrollToBottom();
     }
 
     function addSystemMessage(text) {
       const messageDiv = document.createElement("div");
       messageDiv.className = "message bot-message";
-      
+
       const contentDiv = document.createElement("div");
       contentDiv.className = "message-content";
       contentDiv.style.color = "#0080ff";
       contentDiv.textContent = "> SYSTEM: " + text;
-      
+
       const timestampDiv = document.createElement("div");
       timestampDiv.className = "timestamp";
       timestampDiv.textContent = `[${getCurrentTime()}]`;
-      
+
       messageDiv.appendChild(contentDiv);
       messageDiv.appendChild(timestampDiv);
       chatBox.appendChild(messageDiv);
-      
+
       scrollToBottom();
     }
 
     function addTypingIndicator() {
       const typingDiv = document.createElement("div");
       typingDiv.className = "message bot-message";
-      
+
       const contentDiv = document.createElement("div");
       contentDiv.className = "message-content";
       contentDiv.innerHTML = `
@@ -132,11 +132,11 @@
           <span></span>
         </div>
       `;
-      
+
       typingDiv.appendChild(contentDiv);
       chatBox.appendChild(typingDiv);
       scrollToBottom();
-      
+
       return typingDiv;
     }
 
@@ -157,18 +157,18 @@
       addSystemMessage("CONNECTION_ESTABLISHED");
     }, 1000);
 
-window.addEventListener("load", () => {
-  const splash = document.getElementById("opening-slide");
-  const main = document.getElementById("main-content");
+    window.addEventListener("load", () => {
+      const splash = document.getElementById("opening-slide");
+      const main = document.getElementById("main-content");
 
-  setTimeout(() => {
-    splash.classList.add("fade-out");
-    setTimeout(() => {
-      splash.style.display = "none";
-      main.style.display = "block";
-    }, 1000); // matches the CSS transition
-  }, 2000); // how long the splash shows
-});
+      setTimeout(() => {
+        splash.classList.add("fade-out");
+        setTimeout(() => {
+          splash.style.display = "none";
+          main.style.display = "block";
+        }, 1000); // matches the CSS transition
+      }, 2000); // how long the splash shows
+    });
   </script>
 </body>
 </html>
